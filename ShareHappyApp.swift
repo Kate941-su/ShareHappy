@@ -11,8 +11,8 @@ import SwiftUI
 struct ShareHappyApp: App {
     var body: some Scene {
         WindowGroup {
-          LaunchPage()
-//            LoginPage()
+//          LaunchPage()
+          AvailableUserPage()
         }
     }
 }
