@@ -17,14 +17,16 @@ struct LaunchPage: View {
       VStack(alignment: .center) {
         Image(.iconSplashShareHappySvg).resizable().aspectRatio(1, contentMode: .fit).frame(width: containerWidth * 0.5)
       }.onAppear {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        Task {
+          try await Task.sleep(for: .seconds(2))
           state = .login
         }
       }
     } else if state == .login {
-      LoginPage()
+      FilePickerPage()
+//      LoginPage()
     } else {
-      AvailableUserPage()
+      AvailableUserPage(userName: "")
     }
   }
 }

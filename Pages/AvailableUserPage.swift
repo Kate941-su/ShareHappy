@@ -7,22 +7,33 @@
 
 import Combine
 import SwiftUI
+import Firebase
 
 struct AvailableUserPage: View {
   @StateObject var deviceLocationService = DeviceGeoLocationService.shared
-
   @State var tokens: Set<AnyCancellable> = []
-  @State var coordinates: (lat: Double, lon: Double) = (0, 0)
+  @State var coordinates: Coordinates = Coordinates(latitude: 0, logitude: 0)
+  @State var userNameFromFirebase: String = ""
+  let userName: String
+  let dummyPoint: Coordinates = Coordinates(latitude: 35.196529, logitude: 136.879950)
+  let userRepository: UserRepository = UserRepository()
+  
+  init(userName: String) {
+    self.userName = userName
+  }
 
   var body: some View {
     VStack(alignment: .leading) {
-      Text("Latitude: \(coordinates.lat)").font(.largeTitle)
-      Text("Longitude: \(coordinates.lon)").font(.largeTitle)
+      Text("\(userName)")
+      Text("distance is \(deviceLocationService.getDistance(point1: coordinates, point2: dummyPoint))m")
+      Text("Latitude: \(coordinates.latitude)").font(.largeTitle)
+      Text("Longitude: \(coordinates.longitude)").font(.largeTitle)
     }.onAppear {
       // Subscribe observers at first.
       observeCoordinateUpdates()
       observeLocationAccessDenied()
       deviceLocationService.requestLocationUpdates()
+      userRepository.showUserAllData()
     }
   }
 
@@ -34,7 +45,7 @@ struct AvailableUserPage: View {
           print(error)
         }
       } receiveValue: { coordinates in
-        self.coordinates = (coordinates.latitude, coordinates.longitude)
+        self.coordinates = Coordinates(latitude: coordinates.latitude, logitude: coordinates.longitude)
       }.store(in: &tokens)
   }
 
@@ -48,5 +59,5 @@ struct AvailableUserPage: View {
 }
 
 #Preview {
-  AvailableUserPage()
+  AvailableUserPage(userName: "dummy")
 }

@@ -9,6 +9,9 @@ import Combine
 import CoreLocation
 import Foundation
 
+let POLE_RADIUS: Double = 6356752.314245
+let EQUATOR_RADIUS: Double = 6378137.0
+
 class DeviceGeoLocationService: NSObject, CLLocationManagerDelegate, ObservableObject {
   // Notify event
   var coordinatesPublisher = PassthroughSubject<CLLocationCoordinate2D, Error>()
@@ -60,4 +63,59 @@ class DeviceGeoLocationService: NSObject, CLLocationManagerDelegate, ObservableO
   func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
     coordinatesPublisher.send(completion: .failure(error))
   }
+    
+  func getDistance(point1: Coordinates, point2: Coordinates) -> Double {
+    /// https://www.gis-py.com/entry/py-latlon2distance
+    let radianPoint1 = point1.convertToRadian()
+    let radianPoint2 = point2.convertToRadian()
+    let pointDifference = radianPoint2 - radianPoint1
+    let latAverage = (radianPoint1.latitude + radianPoint2.latitude) / 2
+    let e2 = (pow(EQUATOR_RADIUS, 2) - pow(POLE_RADIUS, 2)) / pow(EQUATOR_RADIUS, 2)
+    let w = sqrt(1 - e2 * pow(sin(latAverage), 2))
+    let m = EQUATOR_RADIUS * (1 - e2) / pow(w, 3)
+    let n = EQUATOR_RADIUS / w
+    let distance = sqrt(pow(m * pointDifference.latitude, 2) + pow(n * pointDifference.longitude * cos(latAverage), 2))
+    print(distance)
+    return distance
+  }
+}
+
+struct Coordinates {
+  let longitude: Double
+  let latitude: Double
+  init(latitude: Double, logitude: Double) {
+    self.latitude = latitude
+    self.longitude = logitude
+  }
+  
+  static func + (left: Coordinates, right: Coordinates) -> Coordinates {
+    return Coordinates(latitude: left.latitude + right.latitude, logitude: left.longitude + right.longitude)
+  }
+
+  static func - (left: Coordinates, right: Coordinates) -> Coordinates {
+    return Coordinates(latitude: left.latitude - right.latitude, logitude: left.longitude - right.longitude)
+  }
+  
+  func degreeToRadian(degree: Double) -> Double {
+    return degree * .pi / 180
+  }
+  
+  func radianToDegree(radian: Double) -> Double {
+    return radian * 180 / .pi
+  }
+  
+  func convertToRadian() -> Coordinates {
+    return Coordinates(
+      latitude: degreeToRadian(degree: self.longitude),
+      logitude: degreeToRadian(degree: self.latitude)
+    )
+  }
+
+  func convertToDegree() -> Coordinates {
+    return Coordinates(
+      latitude: radianToDegree(radian: self.longitude),
+      logitude: radianToDegree(radian: self.latitude)
+    )
+  }
+  
 }
