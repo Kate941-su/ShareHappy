@@ -8,7 +8,7 @@
 import Foundation
 import CoreBluetooth
 
-class CentralController: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
+class CentralManagerController: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
   
   var centralManager: CBCentralManager!
   var discoveredPeripherals: [CBPeripheral] = []

@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct CentralPage: View {
-    var body: some View {
+  
+  let centralManagerController = CentralManagerController()
+  
+  var body: some View {
         Text("Central Page")
     }
 }

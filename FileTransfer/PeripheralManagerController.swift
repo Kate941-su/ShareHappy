@@ -8,7 +8,7 @@
 import Foundation
 import CoreBluetooth
 
-class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
+class PeripheralManagerController: NSObject, CBPeripheralManagerDelegate {
   var peripheralManager: CBPeripheralManager!
   var service: CBMutableService?
   let serviceUUID = FileTransferService.serviceUUID
@@ -28,7 +28,7 @@ class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
       }
   }
   
-  func createService() {
+  private func createService() {
       dataCharacteristic = CBMutableCharacteristic(
           type: dataCharacteristicUUID,
           properties: [.read, .write, .notify],

@@ -23,8 +23,9 @@ struct LaunchPage: View {
         }
       }
     } else if state == .login {
-      FilePickerPage()
+//      FilePickerPage()
 //      LoginPage()
+      BluetoothChoicePage()
     } else {
       AvailableUserPage(userName: "")
     }
